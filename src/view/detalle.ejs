@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cotizaciones</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css" integrity="sha512-KfkfwYDsLkIlwQp6LFnl8zNdLGxu9YAA1QvwINks4PhcElQSvqcyVLLD9aMhXd13uQjoXtEKNosOWaZqXgel0g==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<style>
+    #overlay{	
+        position: fixed;
+        top: 0;
+        z-index: 100;
+        width: 100%;
+        height:100%;
+        display: none;
+        background: rgba(0,0,0,0.6);
+      }
+      .cv-spinner {
+        height: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;  
+      }
+      .spinner {
+        width: 40px;
+        height: 40px;
+        border: 4px #ddd solid;
+        border-top: 4px #2e93e6 solid;
+        border-radius: 50%;
+        animation: sp-anime 0.8s infinite linear;
+      }
+      @keyframes sp-anime {
+        100% { 
+          transform: rotate(360deg); 
+        }
+      }
+      .is-hide{
+        display:none;
+      }
+</style>
+<script>
+    function ampliar(id){
+        console.log(id.src);
+        $("#imagenAmpliada").attr("src",id.src);
+
+    }
+</script>
+</head>
+<body>
+    <div id="overlay">
+        <div class="cv-spinner">
+          <span class="spinner"></span>
+        </div>
+      </div> 
+        <% if (cotizacion) { %>
+            <div class="container mt-4">
+                <div class="card border-secondary">
+                <div class="card-header">Cotizacion</div>
+                <div class="card-body">
+                    <form action="/UpdateProducts" method ="POST">
+                        <input hidden name="IDCOTIZACION" id="IDCOTIZACION" value="<%= cotizacion.IDCOTIZACION %>"> 
+                        <div class="mb-3">
+                            <label for="user" class="form-label">Nombre</label>
+                            <input type="text" class="form-control" id="NOMBRECOMPLETO" name="NOMBRECOMPLETO" value="<%= cotizacion.NOMBRECOMPLETO %>"  tabindex="1" readonly>
+                        </div>
+                        <div class="mb-3">
+                            <label for="user" class="form-label">Tipo Cotizacion</label>
+                            <input type="text" class="form-control" id="TIPOCOTIZACION" name="TIPOCOTIZACION" value="<%= cotizacion.TIPOCOTIZACION %>"  tabindex="2" readonly>
+                        </div>
+                        <div class="mb-3">
+                            <label for="user" class="form-label">Estado</label>
+                            <input type="text" class="form-control " id="ESTADO" name="ESTADO" value="<%= cotizacion.ESTADO %>"  tabindex="2" readonly>
+                        </div>                     
+                        <div class="row">
+                            <div class="col">
+                              <label for="user" class="form-label">Vigencia Desde</label>
+                              <input type="text" class="form-control "  value="<%= cotizacion.VIGENCIADESDE.toLocaleString() %>"  tabindex="2" readonly>
+                            </div>
+                            <div class="col">
+                                <label for="user" class="form-label">Vigencia Hasta</label>
+                                <input type="text" class="form-control" id="VIGENCIAHASTA" name="VIGENCIAHASTA" value="<%= cotizacion.VIGENCIAHASTA.toLocaleString() %>"  tabindex="2" readonly>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                </div>
+            </div>
+            <% } %>
+            <!-- Modal -->
+            <div class="modal fade" id="imagenModal" tabindex="-1" aria-labelledby="imagenModal" aria-hidden="true">
+                <div class="modal-dialog modal-xl">
+                <div class="modal-content">
+                    <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="exampleModalLabel">Modal title</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <img src="" class="img-fluid" id="imagenAmpliada" style="width: 1200px;height: 800px;">
+                    </div>
+                </div>
+                </div>
+            </div>
+            <% almacenes.forEach((user,i)=> { %> 
+                <h2 hidden><%= i=1 %></h2>    
+            <div class="modal fade" id="exampleModal<%= user.IDALMACEN %>" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-xl">
+                  <div class="modal-content">
+                    <div class="modal-header">                          
+                      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row">
+                        <% imagenes.forEach((user2)=> { %>     
+                                          
+                        <% if (user2.IDALMACEN === user.IDALMACEN) { %>
+                            <div class="col">
+                            <div class="card" style="width: 18rem;">
+                                <img src="data:image/jpg;base64,<%= user2.IMAGEN.toString('base64') %>" class="img-thumbnail" alt="" data-bs-toggle="modal" data-bs-target="#imagenModal" style="width: 300px;height: 300px;" onclick="ampliar(this)">
+                                <div class="card-body">
+                                  <p class="card-text"><%= user2.NOMBRE %></p>
+                                </div>
+                              </div>
+                            
+                            </div>
+                        <% } %>
+                        <% }) %>
+                        
+                    </div>
+                   
+                </div>
+               </div>
+              </div>
+            </div>
+            <% }) %>
+    <div class="container">                
+        <table class="table table-bordered table-striped text-center mt-1">
+            <thead>
+                <tr class="bg-primary text-white">
+                    <th scope="col">NUMERO ITEM</th>
+                    <th scope="col">ZONA</th>
+                    <th scope="col">VALOR SIN IVA</th>
+                    <th scope="col">VALOR TOTAL</th>
+                    <th scope="col">METROS CUADRADOS</th>
+                    <th scope="col">IMAGENES</th>
+                    <th scope="col">SELECCIONA</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% detalle.forEach((user)=> { %>               
+                <tr>
+                    <td><%= user.IDCOTIZACIONDETALLES %></td>
+                    <td><%= user.ALMACEN %></td>
+                    <td><%= user.VALORSINIVA %></td>
+                    <td><%= user.VALORTOTAL %></td>
+                    <td><%= user.METROSCUADRADOS %></td>                    
+                    <td><button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal<%= user.IDZONA %>"><i class="fa-solid fa-images"></i></button></td>
+                    <td> <input class="form-check-input"  type="checkbox"  id="<%= user.IDCOTIZACIONDETALLES %>" name="<%= user.IDCOTIZACIONDETALLES %>" onclick="validaCheckbox(<%= user.IDCOTIZACIONDETALLES %>)"></td> 
+                </tr>
+                
+                <% }) %>
+            </tbody>
+        </table>
+    </div>
+    <div class="container">
+    <% if (cotizacion) { %>
+    <a class="btn btn-outline-info" onclick="confirmar(<%= cotizacion.IDCOTIZACION %>)">Confirmar</button>
+    <a  class="btn btn-outline-danger" onclick="rechazar(<%= cotizacion.IDCOTIZACION %>)">Rechazar</a>
+    <% } %>
+    </div>
+
+    
+    <script>        
+     
+                
+    function validaCheckbox(id)
+    {   
+        jQuery(function($){
+        $(document).ajaxSend(function() {
+        $("#overlay").fadeIn(1000);
+        });                                       
+            var checkbox = document.getElementById(id).checked;            
+            if(checkbox){
+                
+                $.ajax({ url:"/UpdateDetallesS/"+id, method :"GET", dataType : 'json' ,
+                success : function(json) {
+                    console.log('Success',json);                  
+                },
+                
+                error : function() {
+                    console.log('Disculpe, existió un problema');
+                    validate = false;
+                }}).done(function() {
+                setTimeout(function(){
+                    $("#overlay").fadeOut(1000);
+                },1000);
+                });
+            
+                                
+            }
+            else
+            {                
+                $.ajax({ url:"/UpdateDetallesN/"+id, method :"GET", dataType : 'json' ,
+                success : function(json) {console.log('Success',json);},                
+                error : function() {console.log('Disculpe, existió un problema');}}).done(function() {
+                setTimeout(function(){
+                    $("#overlay").fadeOut(1000);
+                },1000);
+                });;
+            }
+        });
+    }
+                
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.4.8/dist/sweetalert2.all.min.js"></script>
+
+    <script>
+        function confirmar(id){
+            const swalWithBootstrapButtons = Swal.mixin({
+            customClass: {
+            cancelButton: 'btn btn-danger',
+            confirmButton: 'btn btn-success'
+            
+            },
+            buttonsStyling: false
+            })
+            swalWithBootstrapButtons.fire({
+            title: '¿Esta seguro?',
+            text: "Desea confirmar la cotización",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Si',
+            cancelButtonText: 'No',
+            reverseButtons: true
+            }).then((result) => {
+            if (result.isConfirmed) {
+            swal.fire(
+            'Confirmada !',
+            'La cotizacion ha sido confirmada',            
+            'success',            
+            )
+            setTimeout(function(){
+                window.location = '/products/confirm/'+id
+            }, 1000);
+            
+            } else if (
+            /* Read more about handling dismissals below */
+            result.dismiss === Swal.DismissReason.cancel
+            ) {
+            swalWithBootstrapButtons.fire(
+            'Cancelada',
+            'Puede seleccionar alguna de las opciones',
+            'error'
+            )
+            }
+            })
+        }
+        function rechazar(id){
+            const swalWithBootstrapButtons = Swal.mixin({
+            customClass: {
+            confirmButton: 'btn btn-success',
+            cancelButton: 'btn btn-danger'
+            },
+            buttonsStyling: false
+            })
+            swalWithBootstrapButtons.fire({
+            title: '¿Esta seguro?',
+            text: "Desea rechazar la cotización",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Si',
+            cancelButtonText: 'No',
+            reverseButtons: true
+            }).then((result) => {
+            if (result.isConfirmed) {
+            swalWithBootstrapButtons.fire(
+            'Rechazada !',
+            'La cotizacion ha sido rechazada',
+            'success'
+            )
+            setTimeout(function(){
+                window.location = '/products/reject/'+id
+            }, 1000);
+            } else if (
+            /* Read more about handling dismissals below */
+            result.dismiss === Swal.DismissReason.cancel
+            ) {
+            swalWithBootstrapButtons.fire(
+            'Cancelada',
+            'Puede seleccionar alguna de las opciones',
+            'error'
+            )
+            }
+            })
+        }
+    </script>
+</body>
+</html>

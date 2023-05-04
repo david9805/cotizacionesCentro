@@ -1,0 +1,32 @@
+@api = http://localhost:3099/products
+@app = http://localhost:3099/
+
+GET {{api}}
+
+
+###
+
+GET {{api}}/12
+
+
+###
+DELETE {{api}}/20
+
+###
+
+GET {{api}}/count
+
+###
+
+PUT {{api}}/25
+Content-Type: application/json
+
+{
+    "a" : "Actualizacion",
+    "b" : 114151
+}
+
+
+###
+
+GET {{app}}
